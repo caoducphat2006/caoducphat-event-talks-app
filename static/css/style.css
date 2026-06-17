@@ -33,6 +33,28 @@
     --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:root.light-theme {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.75);
+    --border-glass: rgba(15, 23, 42, 0.08);
+    --border-glass-hover: rgba(15, 23, 42, 0.15);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --accent-blue: #2563eb;
+    --accent-indigo: #4f46e5;
+    --accent-glow: rgba(79, 70, 229, 0.08);
+    
+    --color-feature-bg: rgba(16, 185, 129, 0.12);
+    --color-announcement-bg: rgba(59, 130, 246, 0.12);
+    --color-issue-bg: rgba(245, 158, 11, 0.12);
+    --color-deprecation-bg: rgba(239, 68, 68, 0.12);
+    --color-general-bg: rgba(100, 116, 139, 0.12);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -150,7 +172,7 @@ body {
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff, #94a3b8);
+    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -197,11 +219,17 @@ body {
     border: 1px solid var(--border-glass);
     color: var(--text-primary);
 }
+:root.light-theme .btn-secondary {
+    background: rgba(15, 23, 42, 0.04);
+}
 
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: var(--border-glass-hover);
     transform: translateY(-1px);
+}
+:root.light-theme .btn-secondary:hover {
+    background: rgba(15, 23, 42, 0.08);
 }
 
 .btn-twitter {
@@ -279,11 +307,17 @@ body {
     outline: none;
     transition: var(--transition-normal);
 }
+:root.light-theme #search-input {
+    background: rgba(255, 255, 255, 0.9);
+}
 
 #search-input:focus {
     border-color: var(--accent-indigo);
     box-shadow: 0 0 0 3px var(--accent-glow);
     background: rgba(10, 14, 23, 0.8);
+}
+:root.light-theme #search-input:focus {
+    background: #ffffff;
 }
 
 #search-input:focus + .search-icon {
@@ -307,7 +341,7 @@ body {
 }
 
 .clear-btn:hover {
-    color: white;
+    color: var(--text-primary);
 }
 
 .filters-container {
@@ -439,7 +473,7 @@ body {
     font-family: var(--font-heading);
     font-size: 18px;
     font-weight: 700;
-    color: #e2e8f0;
+    color: var(--text-primary);
 }
 
 .day-line {
@@ -526,9 +560,12 @@ body {
 
 .card-btn:hover {
     background: rgba(255, 255, 255, 0.08);
-    color: white;
+    color: var(--text-primary);
     border-color: var(--border-glass-hover);
     transform: scale(1.05);
+}
+:root.light-theme .card-btn:hover {
+    background: rgba(15, 23, 42, 0.05);
 }
 
 .card-btn.btn-tweet-hover:hover {
@@ -540,7 +577,7 @@ body {
 /* Update Body Text Style */
 .card-content {
     font-size: 14px;
-    color: #cbd5e1;
+    color: var(--text-secondary);
 }
 
 .card-content h3 {

@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const refreshBtn = document.getElementById('refresh-btn');
     const refreshIcon = document.getElementById('refresh-icon');
     const exportCsvBtn = document.getElementById('export-csv-btn');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = document.getElementById('theme-icon');
     
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search');
@@ -35,6 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const toast = document.getElementById('toast');
     const toastText = document.getElementById('toast-text');
 
+    // Initialize Theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        themeIcon.className = 'fa-solid fa-moon';
+    } else {
+        document.documentElement.classList.remove('light-theme');
+        themeIcon.className = 'fa-solid fa-sun';
+    }
+
     // Load initial data
     fetchReleaseNotes(false);
 
@@ -42,6 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshBtn.addEventListener('click', () => fetchReleaseNotes(true));
     retryBtn.addEventListener('click', () => fetchReleaseNotes(true));
     exportCsvBtn.addEventListener('click', exportToCSV);
+    
+    themeToggleBtn.addEventListener('click', () => {
+        const isLight = document.documentElement.classList.toggle('light-theme');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        themeIcon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        showToast(`Switched to ${isLight ? 'Light' : 'Dark'} mode!`);
+    });
     
     // Search input handler (live search)
     searchInput.addEventListener('input', (e) => {
