@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Notes Explorer</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Background glows for modern ambient effect -->
+    <div class="glow-bg">
+        <div class="glow-sphere glow-1"></div>
+        <div class="glow-sphere glow-2"></div>
+    </div>
+
+    <header class="app-header">
+        <div class="container header-content">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>BQ Pulse</h1>
+                    <p>BigQuery Release Notes Explorer</p>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button id="refresh-btn" class="btn btn-primary" title="Refresh Release Notes">
+                    <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main container">
+        <!-- Dashboard Toolbar -->
+        <section class="toolbar-section">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search updates (e.g. Gemini, partition, performance)..." autocomplete="off">
+                <button id="clear-search" class="clear-btn" style="display: none;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="filters-container">
+                <span class="filter-label">Filter by type:</span>
+                <div class="filter-pills" id="type-filters">
+                    <button class="filter-pill active" data-type="all">All Updates</button>
+                    <button class="filter-pill" data-type="Feature">Features</button>
+                    <button class="filter-pill" data-type="Announcement">Announcements</button>
+                    <button class="filter-pill" data-type="Issue">Issues</button>
+                    <button class="filter-pill" data-type="Deprecation">Deprecations</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Release Notes Feed -->
+        <section class="feed-section">
+            <div id="loading-state" class="state-container">
+                <div class="spinner"></div>
+                <p>Fetching latest release notes from Google Cloud...</p>
+            </div>
+
+            <div id="error-state" class="state-container" style="display: none;">
+                <div class="error-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3>Failed to load release notes</h3>
+                <p id="error-message">Unknown error occurred.</p>
+                <button id="retry-btn" class="btn btn-secondary">
+                    <i class="fa-solid fa-arrows-rotate"></i> Try Again
+                </button>
+            </div>
+
+            <div id="empty-state" class="state-container" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h3>No updates found</h3>
+                <p>Try adjusting your search query or filter settings.</p>
+            </div>
+
+            <!-- Feed Content -->
+            <div id="feed-container" class="feed-container"></div>
+        </section>
+    </main>
+
+    <!-- Tweet Composer Modal -->
+    <div id="tweet-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-brands fa-x-twitter"></i> Share Update</h3>
+                <button class="close-modal-btn" id="close-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tweet-preview-header">Draft your Tweet</div>
+                <div class="textarea-container">
+                    <textarea id="tweet-textarea" rows="6" maxlength="500" placeholder="What's happening?"></textarea>
+                    <div class="char-counter" id="char-counter">0 / 280</div>
+                </div>
+                <div class="tweet-warning" id="tweet-warning" style="display: none;">
+                    <i class="fa-solid fa-circle-info"></i> Characters exceed 280 limit. X might truncate this post.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="copy-text-btn">
+                    <i class="fa-regular fa-copy"></i> Copy Text
+                </button>
+                <button class="btn btn-twitter" id="submit-tweet-btn">
+                    <i class="fa-brands fa-x-twitter"></i> Post on X
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification for Copy -->
+    <div id="toast" class="toast" style="display: none;">
+        <i class="fa-solid fa-circle-check"></i> <span id="toast-text">Text copied to clipboard!</span>
+    </div>
+
+    <footer class="app-footer">
+        <div class="container footer-content">
+            <p>BQ Pulse &bull; Created with Flask & Vanilla CSS/JS</p>
+            <p>Data fetched live from official <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" rel="noopener">Google Cloud RSS Feed</a></p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
