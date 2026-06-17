@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // State management
     let allUpdates = [];
+    let activeFilteredUpdates = [];
     let currentFilter = 'all';
     let searchQuery = '';
     
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const refreshBtn = document.getElementById('refresh-btn');
     const refreshIcon = document.getElementById('refresh-icon');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
     
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search');
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     refreshBtn.addEventListener('click', () => fetchReleaseNotes(true));
     retryBtn.addEventListener('click', () => fetchReleaseNotes(true));
+    exportCsvBtn.addEventListener('click', exportToCSV);
     
     // Search input handler (live search)
     searchInput.addEventListener('input', (e) => {
@@ -176,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
+        activeFilteredUpdates = filtered;
         renderFeed(filtered);
     }
 
@@ -408,5 +412,65 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             document.body.removeChild(textArea);
         });
+    }
+
+    function exportToCSV() {
+        if (activeFilteredUpdates.length === 0) {
+            showToast("No updates to export!", true);
+            return;
+        }
+
+        // CSV headers
+        const headers = ["Date", "Type", "Link", "Content (Plain Text)"];
+        
+        // Escape helper to handle double quotes, commas, and newlines in CSV
+        const escapeCSVValue = (value) => {
+            if (value === null || value === undefined) {
+                return '';
+            }
+            let str = String(value);
+            // Replace double quotes with pair of double quotes
+            str = str.replace(/"/g, '""');
+            // If the value contains comma, quotes, or newlines, wrap it in double quotes
+            if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+                str = `"${str}"`;
+            }
+            return str;
+        };
+
+        // Construct CSV content
+        const rows = [
+            headers.join(','),
+            ...activeFilteredUpdates.map(update => [
+                escapeCSVValue(update.date),
+                escapeCSVValue(update.type),
+                escapeCSVValue(update.link),
+                escapeCSVValue(update.text)
+            ].join(','))
+        ];
+        
+        const csvContent = rows.join('\r\n');
+        
+        // Create download link
+        try {
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' }); // UTF-8 BOM
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            
+            // Format filename with current date or filter
+            const filterName = currentFilter !== 'all' ? `_${currentFilter.toLowerCase()}` : '';
+            const filename = `bq_releases${filterName}_export.csv`;
+            
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Exported CSV successfully!");
+        } catch (e) {
+            console.error("CSV export error", e);
+            showToast("Failed to export CSV", true);
+        }
     }
 });
